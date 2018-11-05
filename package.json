@@ -2,21 +2,24 @@
     "name": "g-visa-checker",
     "desciption": "A visa checking component for G Trips",
     "version": "0.1.0",
-    "private": true,
-    "main": "index.js",
-    "javascript": "./",
-    "dependencies": {
+    "module": "dist/index.js",
+    "scripts": {
+        "prepublish": "rm -rf ./dist && npm run build"
+    },
+    "peerDependencies": {
         "react": "^16.5.0",
-        "react-dom": "^16.5.0",
+        "react-dom": "^16.5.0"
+    },
+    "engines": {
+        "node": ">=6",
+        "npm": ">=5"
+    },
+    "dependencies": {
         "react-flag-icon-css": "^1.0.24",
         "react-redux": "^5.0.7",
         "react-select": "^2.0.0",
         "redux": "^4.0.1",
         "styled-components": "^3.4.6"
-    },
-    "engines": {
-        "node": ">=6",
-        "npm": ">=5"
     },
     "devDependencies": {
         "@babel/core": "^7.1.2",
@@ -25,6 +28,11 @@
         "@babel/plugin-transform-runtime": "^7.1.0",
         "@babel/polyfill": "^7.0.0",
         "@babel/preset-env": "^7.1.0",
-        "@babel/runtime": "^7.1.2"
+        "@babel/runtime": "^7.1.2",
+        "babel-loader": "^8.0.4",
+        "file-loader": "^2.0.0",
+        "mini-css-extract-plugin": "^0.4.4",
+        "style-loader": "^0.23.1",
+        "webpack": "^4.25.0"
     }
 }
