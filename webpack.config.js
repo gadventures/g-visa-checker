@@ -1,10 +1,12 @@
 var path = require("path")
 var webpack = require('webpack')
 var CssExtract = require('mini-css-extract-plugin')
+var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
     context: __dirname,
     entry: './src/index',
+    mode: 'development',
     output: {
         path: path.resolve('./dist/'),
         filename: "[name]-[hash].js",
@@ -24,7 +26,7 @@ module.exports = {
             exclude: /node_modules/,
             loader: 'babel-loader',
             options: {
-                presets: ['@babel/preset-env'],
+                presets: [ '@babel/env' ],
                 plugins: [
                     ["@babel/plugin-proposal-decorators", {legacy: true}],
                     "@babel/plugin-proposal-class-properties",
@@ -35,7 +37,7 @@ module.exports = {
         },
         {
             test: /\.s?css/,
-            loaders: [CssExtract.loader, 'style-loader', 'css-loader']
+            loaders: ['style-loader', 'css-loader']
         },
         {
             test: /\.(png|svg)$/,
@@ -43,7 +45,7 @@ module.exports = {
         }],
     },
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
         alias: {
             'react': path.resolve(__dirname, './node_modules/react'),
             'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
