@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const HeaderStyled = styled.h1`
+const HeaderStyled = styled.h2`
     font-family: Montserrat, Sans-serif;
     font-size: 1.6em;
     font-weight: bold;

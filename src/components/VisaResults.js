@@ -1,9 +1,12 @@
 import React from "react";
+import DOMServer from 'react-dom/server'
 import styled from "styled-components";
 
 import {DestinationResult} from './DestinationResult'
-import CautionSVG from "../static/icon-caution.svg";
-import CheckSVG from "../static/icon-check.svg";
+import CautionSVG from './CautionSVG'
+import CheckSVG from './CheckSVG'
+// import CautionSVG from "../static/icon-caution.svg";
+//import CheckSVG from "../static/icon-check.svg";
 
 const HeaderStyled = styled.div`
     background: #def9dc;
@@ -19,26 +22,31 @@ const HeaderStyled = styled.div`
 
 const HeaderInnerStyled = styled.h3`
     margin: 14px 0;
-    img {
-        padding-bottom: 4px;
-        padding-right: 15px;
-    }
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 `;
 
 const VisaDisplayStyled = styled.div`
     margin-top: 20px;
 `;
 
+const cautionURI = `url("data:image/svg+xml,${encodeURIComponent(DOMServer.renderToStaticMarkup(<CautionSVG />))})`
+const checkURI = `url("data:image/svg+xml,${encodeURIComponent(DOMServer.renderToStaticMarkup(<CheckSVG />))})`
 
 export const VisaResults = ({results, required}) =>
     <VisaDisplayStyled>
         <HeaderStyled required={required}>
             <HeaderInnerStyled>
-                {required ?
-                    <img src={CautionSVG} width={20}/> :
-                    <img src={CheckSVG} width={20}/>
-                }
-                {`You ${!required ? "don't" : ""} need a Visa for`}
+                <span style={{flexShrink: 1, marginRight: 15}}>
+                    {required ?
+                        <CautionSVG height={30} width={30} /> :
+                        <CheckSVG height={20} width={20} />
+                    }
+                </span>
+                <span style={{flexGrow: 1}}>
+                    {`You ${!required ? "don't" : ""} need a visa for`}
+                </span>
             </HeaderInnerStyled>
         </HeaderStyled>
         {Object.values(results || {}).map((data, key) =>

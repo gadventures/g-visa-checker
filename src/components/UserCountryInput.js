@@ -2,10 +2,9 @@ import React from "react";
 import {connect} from 'react-redux'
 import Select from "react-select";
 import styled from "styled-components";
-import FlagIcon from './FlagIcon'
 
 import {API} from '../gapi'
-import {ADD_NATIONALITIES, ADD_RESULTS} from '../constants'
+import {ADD_NATIONALITIES, ADD_RESULTS, FLAGS_ROOT_URL} from '../constants'
 
 // Styles
 const ComboboxInputStyled = styled.div`
@@ -78,7 +77,10 @@ class ComboBoxInput extends React.Component {
         const responses = await Promise.all(
             // there are currently 239 nationalities in our api
             [1, 2, 3].map(page =>
-                API.get({url: `/nationalities?page=${page}&max_per_page=100`})
+                API.get({
+                    url: `/nationalities?page=${page}&max_per_page=100`,
+                    opts: {...this.props.GAPI_CREDS}
+                })
             )
         )
         let nationalities = []
@@ -145,16 +147,12 @@ class ComboBoxInput extends React.Component {
 
         // make them alphabetical
         nationalities.sort((a, b) => (a.name > b.name ? 1 : -1))
-
         return (
             <ComboboxInputStyled>
                 <SelectStyled>
                     {!!nationality && (
                         <FlagStyled>
-                            <FlagIcon
-                                code={nationality.countryCode.toLowerCase()}
-		                        size={'lg'}
-                            />
+                            <img src={`${FLAGS_ROOT_URL}/4x3/${nationality.countryCode.toLowerCase()}.svg`}/>
                         </FlagStyled>
                     )}
                     {!!(nationalities && nationalities.length) &&

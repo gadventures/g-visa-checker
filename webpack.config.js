@@ -6,12 +6,13 @@ var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 module.exports = {
     context: __dirname,
     entry: './src/index',
-    mode: 'development',
+    devtool: 'sourcemap',
     output: {
         path: path.resolve('./dist/'),
-        filename: "[name]-[hash].js",
-        library: 'g-visa-checker',
-        publicPath: '/dest/'
+        filename: "index.js",
+        library: 'visachecker.js',
+        libraryTarget: 'umd',
+        umdNamedDefine: true
     },
     plugins: [
         new CssExtract({
@@ -22,6 +23,7 @@ module.exports = {
     module: {
         rules: [{
             test: /\.jsx?$/,
+            type: 'javascript/esm',
             include: path.resolve(__dirname, 'src'),
             exclude: /node_modules/,
             loader: 'babel-loader',
@@ -48,12 +50,7 @@ module.exports = {
         extensions: ['.js', '.jsx'],
         alias: {
             'react': path.resolve(__dirname, './node_modules/react'),
-            'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-            "react-flag-icon-css": path.resolve(__dirname, './node_modules/react-flag-icon-css'),
-            "react-redux": path.resolve(__dirname, './node_modules/react-redux'),
-            "react-select": path.resolve(__dirname, './node_modules/react-select'),
-            "redux": path.resolve(__dirname, './node_modules/redux'),
-            "styled-components": path.resolve(__dirname, './node_modules/styled-components')
+            'react-dom': path.resolve(__dirname, './node_modules/react-dom')
         }
     },
     externals: {
