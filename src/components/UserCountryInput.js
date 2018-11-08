@@ -77,6 +77,11 @@ class ComboBoxInput extends React.Component {
     async checkForVisas(event){
 
         const {destinations, countries} = this.props
+
+        // fetching too early, countries probably not loaded yet
+        if(Object.keys(countries || {}).length == 0){
+            return;
+        }
         const nationality = countries[event.value]
 
         this.props.isLoading(true)
@@ -105,16 +110,26 @@ class ComboBoxInput extends React.Component {
         const {countries, defaultNationality} = this.props
         if(!countries){
             const countryData = require('g-countries')
-            if(defaultNationality){
-                let nationality = countryData[defaultNationality.toUpperCase()]
-                this.setState({nationality})
-            }
             this.props.dispatch({
                 type: ADD_COUNTRIES,
                 payload: {
                     countries: countryData
                 }
             })
+            if(defaultNationality){
+                let nationality = countryData[defaultNationality.toUpperCase()]
+                this.checkForVisas({value: this.state.nationality.countryCode})
+                this.setState({nationality})
+            }
+        }
+    }
+
+    componentDidUpdate(prevProps){
+        // if a default is set for nationality, wait til the countries are loaded,
+        // then check for the visa. The countries shouldn't change since they
+        // are statically loaded
+        if(this.props.countries != prevProps.countries && this.state.nationality){
+            this.checkForVisas({value: this.state.nationality.countryCode})
         }
     }
 
