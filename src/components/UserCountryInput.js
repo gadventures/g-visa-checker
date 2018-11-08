@@ -3,8 +3,11 @@ import {connect} from 'react-redux'
 import Select from "react-select";
 import styled from "styled-components";
 
+import countryData from 'g-countries'
+
 import {API} from '../gapi'
-import {ADD_NATIONALITIES, ADD_RESULTS, FLAGS_ROOT_URL} from '../constants'
+import {ADD_COUNTRIES, ADD_RESULTS, FLAGS_ROOT_URL} from '../constants'
+
 
 // Styles
 const ComboboxInputStyled = styled.div`
@@ -73,48 +76,14 @@ class ComboBoxInput extends React.Component {
         this.state = { nationality: '' }
     }
 
-    async loadNationalities(){
-        const responses = await Promise.all(
-            // there are currently 239 nationalities in our api
-            [1, 2, 3].map(page =>
-                API.get({
-                    url: `/nationalities?page=${page}&max_per_page=100`,
-                    opts: {...this.props.GAPI_CREDS}
-                })
-            )
-        )
-        let nationalities = []
-        for(let resp of responses){
-            let body = await resp.json()
-            if(!(body.results && body.results.length)){
-                continue
-            }
-            for(let nat of body.results){
-                if(nat.country){
-                    nationalities.push({
-                        countryCode: nat.country.id.toUpperCase(),
-                        name: nat.name,
-                        country: nat.country.name
-                    })
-                }
-            }
-        }
-        this.props.dispatch({
-            type: ADD_NATIONALITIES,
-            payload: {
-                nationalities: nationalities.reduce((all, n) => ({...all, [n.countryCode]: n}), {})
-            }
-        })
-    }
-
     async checkForVisas(event){
 
-        const {destinations, nationalities} = this.props
-        const nationality = nationalities[event.value]
+        const {destinations, countries} = this.props
+        const nationality = countries[event.value]
 
         this.props.isLoading(true)
 
-        const destinationCountries = destinations.map(d => nationalities[d])
+        const destinationCountries = destinations.map(d => countries[d])
 
         const baseUrl = `/visas?citizenship=${nationality.countryCode.toUpperCase()}`
         let payload = {}
@@ -135,18 +104,23 @@ class ComboBoxInput extends React.Component {
     }
 
     componentDidMount() {
-        const {nationalities} = this.props
-        if(!nationalities){
-            this.loadNationalities()
+        const {countries} = this.props
+        if(!countries){
+            this.props.dispatch({
+                type: ADD_COUNTRIES,
+                payload: {
+                    countries: countryData
+                }
+            })
         }
     }
 
     render() {
         const {nationality} = this.state
-        const nationalities = Object.values(this.props.nationalities || {})
+        const countries = Object.values(this.props.countries || {})
 
         // make them alphabetical
-        nationalities.sort((a, b) => (a.name > b.name ? 1 : -1))
+        countries.sort((a, b) => (a.nationality > b.nationality ? 1 : -1))
         return (
             <ComboboxInputStyled>
                 <SelectStyled>
@@ -155,17 +129,17 @@ class ComboBoxInput extends React.Component {
                             <img src={`${FLAGS_ROOT_URL}/4x3/${nationality.countryCode.toLowerCase()}.svg`}/>
                         </FlagStyled>
                     )}
-                    {!!(nationalities && nationalities.length) &&
+                    {!!(countries && countries.length) &&
                         <div style={{flexGrow: 1}}>
                             <Select
                                 styles={SelectStyles}
                                 placeholder="Your Citizenship"
-                                options={nationalities.map(n => ({
-                                    label: n.name,
+                                options={countries.map(n => ({
+                                    label: n.nationality,
                                     value: n.countryCode,
                                 }))}
                                 onChange={(e) => {
-                                    this.setState({nationality: this.props.nationalities[e.value]})
+                                    this.setState({nationality: this.props.countries[e.value]})
                                     this.checkForVisas(e)
                                 }}
                             />
@@ -178,5 +152,5 @@ class ComboBoxInput extends React.Component {
 }
 
 export default connect(({visachecker}) => ({
-    nationalities: visachecker.nationalities,
+    countries: visachecker.countries,
 }))(ComboBoxInput)

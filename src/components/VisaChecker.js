@@ -21,15 +21,17 @@ class VisaChecker extends React.Component{
     }
 
     render(){
-        const {results, destinations, passenger, GAPI_PUBLIC_KEY, GAPI_BASE_URL} = this.props;
+        const {results, destinations, passenger} = this.props;
         const destList = destinations.toUpperCase().split(/[,\s]+/)
         const visaRequired = Object.values(results || {}).filter(r => r.required)
         const visaNotRequired = Object.values(results || {}).filter(r => !r.required)
-        const GAPI_CREDS = {GAPI_PUBLIC_KEY, GAPI_BASE_URL}
         return (
             <div>
                 <Header passenger={passenger}/>
-                <UserCountryInput destinations={destList} isLoading={this.isLoading.bind(this)} gapi_creds={{GAPI_CREDS}}/>
+                <UserCountryInput
+                    destinations={destList}
+                    isLoading={this.isLoading.bind(this)}
+                />
                 {this.state.loading && <Loading />}
                 {(!this.state.loading && !!visaRequired.length) &&
                     <VisaResults results={visaRequired} required={true} key={1} />

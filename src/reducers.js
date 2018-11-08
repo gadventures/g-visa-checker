@@ -1,17 +1,17 @@
 import {
-    ADD_NATIONALITIES,
+    ADD_COUNTRIES,
     ADD_RESULTS,
 } from './constants'
 
 export const visaCheckReducer = (
-    state = { nationalities: null, },
+    state = { countries: null, },
     {type, payload}
 ) => {
     switch(type){
-        case ADD_NATIONALITIES:
+        case ADD_COUNTRIES:
             return {
                 ...state,
-                nationalities: payload.nationalities
+                countries: payload.countries
             }
         case ADD_RESULTS:
             return {

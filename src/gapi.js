@@ -3,20 +3,20 @@ const {
     GAPI_BASE_URL
 } = process.env
 
-const apiRequest = ({url, method, body = {}, headers, ...opts}) => {
+const apiRequest = ({url, method, body = {}, headers}) => {
     const reqMeta = {
         method,
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-Application-Key': opts.GAPI_PUBLIC_KEY || GAPI_PUBLIC_KEY,
+            'X-Application-Key': GAPI_PUBLIC_KEY,
             ...headers
         }
     }
     if (method !== 'GET') {
         reqMeta.body = JSON.stringify(body)
     }
-    return fetch(new Request((opts.GAPI_BASE_URL || GAPI_BASE_URL) + url, reqMeta))
+    return fetch(new Request(GAPI_BASE_URL + url, reqMeta))
 }
 
 export const API = {
