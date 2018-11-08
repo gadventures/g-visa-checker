@@ -3,8 +3,6 @@ import {connect} from 'react-redux'
 import Select from "react-select";
 import styled from "styled-components";
 
-import countryData from 'g-countries'
-
 import {API} from '../gapi'
 import {ADD_COUNTRIES, ADD_RESULTS, FLAGS_ROOT_URL} from '../constants'
 
@@ -106,6 +104,7 @@ class ComboBoxInput extends React.Component {
     componentDidMount() {
         const {countries} = this.props
         if(!countries){
+            const countryData = require('g-countries')
             this.props.dispatch({
                 type: ADD_COUNTRIES,
                 payload: {
