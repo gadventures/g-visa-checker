@@ -21,14 +21,16 @@ class VisaChecker extends React.Component{
     }
 
     render(){
-        const {results, destinations, passenger} = this.props;
+        const {results, destinations, passenger, nationality} = this.props;
         const destList = destinations.toUpperCase().split(/[,\s]+/)
         const visaRequired = Object.values(results || {}).filter(r => r.required)
         const visaNotRequired = Object.values(results || {}).filter(r => !r.required)
+        console.log('this nationality passed', nationality)
         return (
             <div>
                 <Header passenger={passenger}/>
                 <UserCountryInput
+                    defaultNationality={nationality}
                     destinations={destList}
                     isLoading={this.isLoading.bind(this)}
                 />

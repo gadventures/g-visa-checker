@@ -102,9 +102,13 @@ class ComboBoxInput extends React.Component {
     }
 
     componentDidMount() {
-        const {countries} = this.props
+        const {countries, defaultNationality} = this.props
         if(!countries){
             const countryData = require('g-countries')
+            if(defaultNationality){
+                let nationality = countryData[defaultNationality.toUpperCase()]
+                this.setState({nationality})
+            }
             this.props.dispatch({
                 type: ADD_COUNTRIES,
                 payload: {
@@ -116,27 +120,30 @@ class ComboBoxInput extends React.Component {
 
     render() {
         const {nationality} = this.state
-        const countries = Object.values(this.props.countries || {})
+        const countries = Object.values(this.props.countries || {}).map(c => ({
+            label: c.nationality,
+            value: c.countryCode,
+        }))
 
         // make them alphabetical
-        countries.sort((a, b) => (a.nationality > b.nationality ? 1 : -1))
+        countries.sort((a, b) => (a.label > b.label ? 1 : -1))
         return (
             <ComboboxInputStyled>
                 <SelectStyled>
                     {!!nationality && (
                         <FlagStyled>
-                            <img src={`${FLAGS_ROOT_URL}/4x3/${nationality.countryCode.toLowerCase()}.svg`}/>
+                            <img src={`${FLAGS_ROOT_URL}/4x3/${nationality.flagSVG}`}/>
                         </FlagStyled>
                     )}
                     {!!(countries && countries.length) &&
                         <div style={{flexGrow: 1}}>
                             <Select
+                                defaultValue={countries.find(
+                                    c => c.value == nationality.countryCode
+                                )}
                                 styles={SelectStyles}
                                 placeholder="Your Citizenship"
-                                options={countries.map(n => ({
-                                    label: n.nationality,
-                                    value: n.countryCode,
-                                }))}
+                                options={countries}
                                 onChange={(e) => {
                                     this.setState({nationality: this.props.countries[e.value]})
                                     this.checkForVisas(e)
