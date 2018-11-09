@@ -118,7 +118,7 @@ class ComboBoxInput extends React.Component {
             })
             if(defaultNationality){
                 let nationality = countryData[defaultNationality.toUpperCase()]
-                this.checkForVisas({value: this.state.nationality.countryCode})
+                this.checkForVisas({value: nationality.countryCode})
                 this.setState({nationality})
             }
         }
@@ -154,7 +154,7 @@ class ComboBoxInput extends React.Component {
                         <div style={{flexGrow: 1}}>
                             <Select
                                 defaultValue={countries.find(
-                                    c => c.value == nationality.countryCode
+                                    c => nationality && c.value == nationality.countryCode
                                 )}
                                 styles={SelectStyles}
                                 placeholder="Your Citizenship"
