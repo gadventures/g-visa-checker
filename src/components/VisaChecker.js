@@ -25,7 +25,6 @@ class VisaChecker extends React.Component{
         const destList = destinations.toUpperCase().split(/[,\s]+/)
         const visaRequired = Object.values(results || {}).filter(r => r.required)
         const visaNotRequired = Object.values(results || {}).filter(r => !r.required)
-        console.log('this nationality passed', nationality)
         return (
             <div>
                 <Header passenger={passenger}/>

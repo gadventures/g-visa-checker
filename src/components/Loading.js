@@ -1,13 +1,12 @@
-import React from "react";
-import styled from "styled-components";
+import React from "react"
 
-const LoadingStyled = styled.div`
-    text-align: center;
-    padding: 20px 0;
-    font-family: Sans-serif;
-    color: #cccccc;
-`;
+const loadingStyle = {
+    textAlign: 'center',
+    padding: '20px 0',
+    fontFamily: 'Sans-serif',
+    color: '#cccccc',
+}
 
 export const Loading = () => {
-    return <LoadingStyled>{"Loading..."}</LoadingStyled>;
-};
+    return <div style={loadingStyle}>{"Loading..."}</div>
+}

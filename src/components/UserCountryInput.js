@@ -1,43 +1,23 @@
 import React from "react";
 import {connect} from 'react-redux'
 import Select from "react-select";
-import styled from "styled-components";
 
 import {API} from '../gapi'
 import {ADD_COUNTRIES, ADD_RESULTS, FLAGS_ROOT_URL} from '../constants'
 
-
-// Styles
-const ComboboxInputStyled = styled.div`
-    font-family: Sans-serif;
-`;
-
-const HeaderStyled = styled.div`
-    font-size: 0.9em;
-    font-family: Montserrat, Sans-serif;
-    font-weight: 400;
-
-    p {
-        padding: 0 0 5px;
-        margin: 0;
+const styles = {
+    selectBox: {
+        fontSize: 16,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    flagOuter: {
+        flexShrink: 1,
+        width: 45,
+        marginRight: 10,
     }
-`;
-
-const SelectStyled = styled.div`
-    font-size: 1em;
-    display: flex;
-    flex-direction: row;
-    justify-content: stretch;
-    align-items: center;
-`;
-
-const FlagStyled = styled.div`
-    flex-shrink: initial;
-    width: 45px;
-    span {
-        margin-top: 8px;
-    }
-`;
+}
 
 const SelectStyles = {
     control: (styles, { isFocused }) => {
@@ -74,6 +54,26 @@ class ComboBoxInput extends React.Component {
         this.state = { nationality: '' }
     }
 
+    async fetchVisaInfo({nationality, dest}){
+        try {
+            const baseUrl = `/visas?citizenship=${nationality.countryCode.toUpperCase()}`
+            let resp = await API.get({url: baseUrl + `&destination=${dest.countryCode}`})
+            let body = await resp.json()
+            if(body.results && body.results[0]) {
+                return {
+                    ok: true,
+                    body: {
+                        ...body.results[0],
+                        destination: dest,
+                        nationality
+                    }
+                }
+            }
+        } catch(err){
+            return { ok: false, err }
+        }
+    }
+
     async checkForVisas(event){
 
         const {destinations, countries} = this.props
@@ -88,18 +88,13 @@ class ComboBoxInput extends React.Component {
 
         const destinationCountries = destinations.map(d => countries[d])
 
-        const baseUrl = `/visas?citizenship=${nationality.countryCode.toUpperCase()}`
         let payload = {}
         for(let dest of destinationCountries){
-            let resp = await API.get({url: baseUrl + `&destination=${dest.countryCode}`})
-            let body = await resp.json()
-            if(body.results && body.results[0]) {
+            if(dest.countryCode !== nationality.countryCode) {
+                let resp = await this.fetchVisaInfo({dest, nationality})
                 let key =  nationality.countryCode + '-' + dest.countryCode
-                payload[key] = {
-                    ...body.results[0],
-                    destination: dest,
-                    nationality
-                }
+                if(resp.ok){ payload[key] = resp.body }
+                else { console.log('Problem finding visa', resp.err) }
             }
         }
         this.props.dispatch({ type: ADD_RESULTS, payload })
@@ -108,19 +103,16 @@ class ComboBoxInput extends React.Component {
 
     componentDidMount() {
         const {countries, defaultNationality} = this.props
+        const countryData = require('g-countries')
+        if(defaultNationality && !this.state.nationality){
+            let nationality = countryData[defaultNationality.toUpperCase()]
+            this.setState({nationality})
+        }
         if(!countries){
-            const countryData = require('g-countries')
             this.props.dispatch({
                 type: ADD_COUNTRIES,
-                payload: {
-                    countries: countryData
-                }
+                payload: { countries: countryData }
             })
-            if(defaultNationality){
-                let nationality = countryData[defaultNationality.toUpperCase()]
-                this.checkForVisas({value: nationality.countryCode})
-                this.setState({nationality})
-            }
         }
     }
 
@@ -143,31 +135,29 @@ class ComboBoxInput extends React.Component {
         // make them alphabetical
         countries.sort((a, b) => (a.label > b.label ? 1 : -1))
         return (
-            <ComboboxInputStyled>
-                <SelectStyled>
-                    {!!nationality && (
-                        <FlagStyled>
-                            <img src={`${FLAGS_ROOT_URL}/4x3/${nationality.flagSVG}`}/>
-                        </FlagStyled>
-                    )}
-                    {!!(countries && countries.length) &&
-                        <div style={{flexGrow: 1}}>
-                            <Select
-                                defaultValue={countries.find(
-                                    c => nationality && c.value == nationality.countryCode
-                                )}
-                                styles={SelectStyles}
-                                placeholder="Your Citizenship"
-                                options={countries}
-                                onChange={(e) => {
-                                    this.setState({nationality: this.props.countries[e.value]})
-                                    this.checkForVisas(e)
-                                }}
-                            />
-                        </div>
-                    }
-                </SelectStyled>
-            </ComboboxInputStyled>
+            <div style={styles.selectBox}>
+                {!!nationality && (
+                    <div style={styles.flagOuter}>
+                        <img src={`${FLAGS_ROOT_URL}/4x3/${nationality.flagSVG}`}/>
+                    </div>
+                )}
+                {!!(countries && countries.length) &&
+                    <div style={{flexGrow: 1}}>
+                        <Select
+                            defaultValue={countries.find(
+                                c => nationality && c.value == nationality.countryCode
+                            )}
+                            styles={SelectStyles}
+                            placeholder="Your Citizenship"
+                            options={countries}
+                            onChange={(e) => {
+                                this.setState({nationality: this.props.countries[e.value]})
+                                this.checkForVisas(e)
+                            }}
+                        />
+                    </div>
+                }
+            </div>
         );
     }
 }

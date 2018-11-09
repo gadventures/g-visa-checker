@@ -1,53 +1,47 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import styled from "styled-components";
 
-const DestinationStyled = styled.div`
-    font-family: Montserrat, Sans-serif;
-    font-weight: 400;
-    font-size: 1em;
-    border-top: 0;
-    padding: 10px;
-    clear: both;
-
-    border: ${({required}) =>
-        !!required ?  "1px solid #f3a6b6" : "1px solid #a7cf9d"
-    };
-`;
-
-const DestinationNameStyled = styled.p`
-    font-weight: 600;
-    padding: 10px 0 5px;
-    margin-bottom: 0;
-    margin-top: 0;
-    font-size: 1.2em;
-`;
-
-const DestinationNotesStyled = styled.p`
-    font-weight: 300;
-    padding: 0;
-    margin: 0;
-    margin: 0;
-    font-size: 1em;
-    line-height: 1.3em;
-    color: #4c4f56;
-`;
-
-const DestinationCallToAction = styled.div`
-    display: inline-block;
-    text-align: center;
-    border-radius: 5px;
-    background: #fc0d1b;
-    margin-top: 20px;
-    a {
-        width: 150px;
-        font-size: 0.9em;
-        color: white;
-        text-decoration: none;
-        padding: 10px;
-        font-weight: bold;
+const styles = {
+    destOuter: {
+        fontFamily: 'Montserrat, Sans-serif',
+        fontWeight: 400,
+        fontSize: 16,
+        borderTop: 0,
+        padding: 10,
+        clear: 'both',
+    },
+    destName: {
+        fontWeight: 600,
+        padding: '10px 0 5px',
+        marginBottom: 0,
+        marginTop: 0,
+        fontSize: 20,
+    },
+    destNotes: {
+        fontWeight: 300,
+        padding: 0,
+        margin: 0,
+        margin: 0,
+        fontSize: 14,
+        lineHeight: '22px',
+        color: '#4c4f56',
+    },
+    destLinkOuter: {
+        display: 'inline-block',
+        textAlign: 'center',
+        borderRadius: 5,
+        background: '#fc0d1b',
+        marginTop: 20,
+    },
+    destLink: {
+        width: 150,
+        fontSize: 14,
+        color: '#fff',
+        textDecoration: 'none',
+        padding: 10,
+        fontWeight: 'bold',
     }
-`;
+}
 
 export const DestinationResult = ({data}) => {
     let {notes = '', urls_to_apply, required} = data
@@ -59,20 +53,18 @@ export const DestinationResult = ({data}) => {
         url = urls_to_apply[0]
     }
     return (
-        <DestinationStyled required={required}>
-            <DestinationNameStyled required={required}>
+        <div style={{...styles.destOuter, border: (required ? "1px solid #f3a6b6" : "1px solid #a7cf9d")}}>
+            <p style={styles.destName}>
                 {data.destination.country}
-            </DestinationNameStyled>
-            <DestinationNotesStyled>{notes}</DestinationNotesStyled>
+            </p>
+            <p style={styles.destNotes}>{notes}</p>
             {!!url && (
-                <div>
-                    <DestinationCallToAction>
-                        <a target="_blank" href={url}>
-                            {"Apply CTA"}
-                        </a>
-                    </DestinationCallToAction>
+                <div style={styles.destLinkOuter}>
+                    <a target="_blank" style={styles.destLink} href={url}>
+                        {"Apply CTA"}
+                    </a>
                 </div>
             )}
-        </DestinationStyled>
+        </div>
     )
 }

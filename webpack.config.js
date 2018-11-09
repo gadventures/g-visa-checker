@@ -1,7 +1,5 @@
 var path = require("path")
 var webpack = require('webpack')
-var CssExtract = require('mini-css-extract-plugin')
-var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
     context: __dirname,
@@ -14,12 +12,6 @@ module.exports = {
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
-    plugins: [
-        new CssExtract({
-            filename: '[name]-[hash].css',
-            chunkFilename: '[id].css'
-        })
-    ],
     module: {
         rules: [{
             test: /\.jsx?$/,
@@ -36,10 +28,6 @@ module.exports = {
                     "@babel/plugin-transform-react-jsx",
                 ]
             }
-        },
-        {
-            test: /\.s?css/,
-            loaders: ['style-loader', 'css-loader']
         },
         {
             test: /\.(png|svg)$/,
