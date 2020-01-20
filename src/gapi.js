@@ -1,7 +1,4 @@
-const {
-    GAPI_PUBLIC_KEY,
-    GAPI_BASE_URL
-} = process.env
+// GAPI_PUBLIC_KEY and GAPI_BASE_URL defined in webpack.DefinePlugin
 
 const apiRequest = ({url, method, body = {}, headers}) => {
     const reqMeta = {

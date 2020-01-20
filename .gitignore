@@ -1,2 +1,31 @@
-dist
-node_modules
+package-lock.json
+
+# Logs
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# Translation files pre-aggregation
+app/translations/app/**/*
+# We want to keep the aggreated translation files
+!app/translations/*.json
+
+# Webpack
+webpack-assets.json
+webpack-stats.json
+
+# DS_Store
+.DS_Store
+
+# Generate files
+static/dist/
+
+# Docs
+docs/
+
+#vscode
+.vscode
+
+tsconfig.json
+
